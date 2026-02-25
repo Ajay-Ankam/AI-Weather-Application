@@ -1,8 +1,13 @@
 import express from "express";
 import dotenv from "dotenv";
-import connectDB from "./config/db.js";
+import cors from 'cors'
 
+
+import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
+import weatherRoutes from "./routes/weatherRoutes.js";
+
+import { protect } from "./middleware/authMiddleware.js";
 
 dotenv.config();
 
@@ -12,11 +17,17 @@ connectDB();
 const app = express();
 
 // Middleware
+app.use(cors())
 app.use(express.json());
 
 // Basic Health Check Route
 
 app.use("/api/auth", authRoutes);
+app.use("/api/weather", weatherRoutes);
+
+app.get("/api/test-auth", protect, (req, res) => {
+  res.json({ message: `Access granted for ${req.user.name}` });
+});
 
 app.get("/", (req, res) => {
   res.status(200).json({ status: "API is running" });

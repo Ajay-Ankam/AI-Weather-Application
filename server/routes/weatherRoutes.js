@@ -1,0 +1,18 @@
+import express from "express";
+import {
+  getLiveWeather,
+  addCity,
+  getUserCities,
+} from "../controllers/weatherController.js";
+import { protect } from "../middleware/authMiddleware.js";
+
+const router = express.Router();
+
+// All weather routes require a valid token
+router.use(protect);
+
+router.get("/live/:city", getLiveWeather);
+router.post("/cities", addCity);
+router.get("/cities", getUserCities);
+
+export default router;
