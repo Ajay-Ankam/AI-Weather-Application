@@ -2,7 +2,7 @@ import express from "express";
 import {
   getLiveWeather,
   addCity,
-  getUserCities,
+  getUserCities, toggleFavorite
 } from "../controllers/weatherController.js";
 import { protect } from "../middleware/authMiddleware.js";
 
@@ -14,5 +14,6 @@ router.use(protect);
 router.get("/live/:city", getLiveWeather);
 router.post("/cities", addCity);
 router.get("/cities", getUserCities);
+router.patch("/cities/:id/favorite", toggleFavorite);
 
 export default router;
