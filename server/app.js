@@ -18,7 +18,14 @@ connectDB();
 const app = express();
 
 // Middleware
-app.use(cors())
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    credentials: true,
+  }),
+);
+
 app.use(express.json());
 
 // Basic Health Check Route
@@ -42,3 +49,6 @@ app.listen(PORT, () => {
     `Server running in ${process.env.NODE_ENV || "development"} mode on port http://localhost:${PORT}`,
   );
 });
+
+
+export default app;
