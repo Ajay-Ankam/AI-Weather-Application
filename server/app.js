@@ -2,6 +2,8 @@ import express from "express";
 import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 
+import authRoutes from "./routes/authRoutes.js";
+
 dotenv.config();
 
 // Connect to Database
@@ -13,6 +15,9 @@ const app = express();
 app.use(express.json());
 
 // Basic Health Check Route
+
+app.use("/api/auth", authRoutes);
+
 app.get("/", (req, res) => {
   res.status(200).json({ status: "API is running" });
 });
