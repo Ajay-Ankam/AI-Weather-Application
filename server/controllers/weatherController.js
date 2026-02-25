@@ -174,3 +174,23 @@ export const toggleFavorite = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+// @desc    Delete a city from dashboard
+// @route   DELETE /api/weather/cities/:id
+export const deleteCity = async (req, res) => {
+  try {
+    const city = await City.findById(req.params.id);
+
+    if (!city) return res.status(404).json({ message: "City not found" });
+
+    // Ownership check
+    if (city.user.toString() !== req.user._id.toString()) {
+      return res.status(401).json({ message: "Not authorized" });
+    }
+
+    await city.deleteOne();
+    res.json({ message: "City removed from dashboard" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

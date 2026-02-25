@@ -1,15 +1,16 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from 'cors'
-
+dotenv.config();
 
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import weatherRoutes from "./routes/weatherRoutes.js";
+import aiRoutes from "./routes/aiRoutes.js";
 
 import { protect } from "./middleware/authMiddleware.js";
 
-dotenv.config();
+// dotenv.config();
 
 // Connect to Database
 connectDB();
@@ -24,6 +25,7 @@ app.use(express.json());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/weather", weatherRoutes);
+app.use("/api/ai", aiRoutes);
 
 app.get("/api/test-auth", protect, (req, res) => {
   res.json({ message: `Access granted for ${req.user.name}` });
