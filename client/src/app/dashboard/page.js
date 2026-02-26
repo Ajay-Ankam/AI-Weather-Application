@@ -4,6 +4,7 @@ import api from "@/lib/axios";
 import WeatherCard from "@/components/WeatherCard";
 import AddCity from "@/components/AddCity";
 import AIChat from "@/components/AIChat";
+import SkeletonCard from "@/components/SkeletonCard"; // Import Skeleton
 
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
@@ -11,11 +12,11 @@ import { useRouter } from "next/navigation";
 export default function Dashboard() {
   const [cities, setCities] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { user } = useAuth();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth(); // Cleaned up double destructuring
   const router = useRouter();
 
   const fetchCities = async () => {
+    // Keep skeleton visible for at least a short moment for smooth transition
     try {
       const { data } = await api.get("/weather/cities");
       setCities(data);
@@ -30,11 +31,9 @@ export default function Dashboard() {
     if (user) fetchCities();
   }, [user]);
 
-  if (loading)
-    return <div className="p-10 text-center">Loading your weather...</div>;
-
   return (
     <div className="min-h-screen bg-gray-50 p-8">
+      {/* Navigation */}
       <nav className="max-w-6xl mx-auto flex justify-between items-center mb-8 bg-white p-4 rounded-xl shadow-sm">
         <button
           onClick={() => router.push("/")}
@@ -50,17 +49,22 @@ export default function Dashboard() {
         </button>
       </nav>
 
-
-      <header className="max-w-6xl mx-auto flex justify-between items-center mb-10">
+      <header className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center mb-10 gap-4">
         <h1 className="text-3xl font-extrabold text-gray-900">
           My <span className="text-blue-600">Weather</span> Dashboard
         </h1>
-        {/* Add City Search Bar will go here later */}
         <AddCity onCityAdded={fetchCities} />
       </header>
 
       <main className="max-w-6xl mx-auto">
-        {cities.length === 0 ? (
+        {loading ? (
+          // Display a 3-card skeleton grid while loading
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3].map((i) => (
+              <SkeletonCard key={i} />
+            ))}
+          </div>
+        ) : cities.length === 0 ? (
           <div className="text-center py-20 bg-white rounded-3xl shadow-sm border border-dashed border-gray-300">
             <p className="text-gray-500">
               No cities added yet. Start by searching for a city!
@@ -75,7 +79,6 @@ export default function Dashboard() {
         )}
       </main>
 
-      {/* Floating AI Agent */}
       <AIChat />
     </div>
   );
